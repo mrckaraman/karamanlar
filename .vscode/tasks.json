@@ -1,0 +1,215 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "admin_app: flutter run (android)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"run",
+				"-d",
+				"emulator-5554",
+				"--debug"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/admin_app"
+			},
+			"isBackground": true
+		},
+		{
+			"label": "customer_app: flutter run (android)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"run",
+				"-d",
+				"emulator-5554",
+				"--debug",
+				"--dart-define-from-file=.dart-define-customer-android.json"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/customer_app"
+			},
+			"isBackground": true
+		},
+		{
+			"label": "customer_app: flutter build apk (release)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"build",
+				"apk",
+				"--release",
+				"--dart-define-from-file=.dart-define-customer-android.json"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/customer_app"
+			},
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "admin_app: flutter build web (release)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"build",
+				"web",
+				"--release",
+				"--dart-define-from-file=.dart-define-admin-web.json"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/admin_app"
+			},
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "customer_app: flutter build web (release)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"build",
+				"web",
+				"--release",
+				"--dart-define-from-file=.dart-define-customer-web.json"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/customer_app"
+			},
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "firebase: deploy hosting",
+			"type": "shell",
+			"command": "npx",
+			"args": [
+				"firebase-tools",
+				"deploy",
+				"--only",
+				"hosting"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"isBackground": false
+		},
+		{
+			"label": "dart analyze",
+			"type": "shell",
+			"command": "dart",
+			"args": [
+				"analyze"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$dart"
+			],
+			"group": "build"
+		},
+		{
+			"label": "dart analyze",
+			"type": "shell",
+			"command": "dart",
+			"args": [
+				"analyze"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$dart"
+			],
+			"group": "build"
+		},
+		{
+			"label": "dart analyze",
+			"type": "shell",
+			"command": "dart",
+			"args": [
+				"analyze"
+			],
+			"isBackground": false,
+			"problemMatcher": [
+				"$dart"
+			],
+			"group": "build"
+		},
+		{
+			"label": "dart analyze",
+			"type": "shell",
+			"command": "dart",
+			"args": [
+				"analyze"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "admin_app: flutter run (chrome)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"run",
+				"-d",
+				"chrome",
+				"--debug",
+				"--dart-define-from-file=.dart-define-admin-web.json"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/admin_app"
+			},
+			"isBackground": true
+		},
+		{
+			"label": "customer_app: flutter run (chrome)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"run",
+				"-d",
+				"chrome",
+				"--debug",
+				"--dart-define-from-file=.dart-define-customer-web.json"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/customer_app"
+			},
+			"isBackground": true
+		},
+		{
+			"label": "customer_app: flutter run (edge)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"run",
+				"-d",
+				"edge",
+				"--debug",
+				"--dart-define-from-file=.dart-define-customer-web.json"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/customer_app"
+			},
+			"isBackground": true
+		},
+		{
+			"label": "customer_app: flutter run (android release crash test)",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"run",
+				"--release",
+				"-d",
+				"emulator-5554",
+				"--dart-define-from-file=.dart-define-customer-android.json",
+				"--dart-define=CRASH_TEST_ENABLED=true"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/apps/customer_app"
+			},
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
