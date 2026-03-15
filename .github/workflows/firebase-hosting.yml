@@ -1,21 +1,4 @@
-<<<<<<< HEAD
-name: Deploy Admin Web to Firebase
-=======
-# Firebase Hosting deploy (admin_app)
-# - Builds Flutter Web for admin_app
-# - Deploys to Firebase Hosting "live" channel
-#
-# Prerequisites (GitHub repo secrets):
-# - FIREBASE_TOKEN: Firebase CLI token (firebase login:ci)
-# - FIREBASE_PROJECT_ID: Firebase project id (e.g. studio-496411193-44315)
-# - ADMIN_WEB_DART_DEFINES_JSON_B64: base64 of a JSON file containing:
-#     SUPABASE_URL, SUPABASE_ANON_KEY and FIREBASE_* web keys used by firebase_options.dart
-#
-# Notes:
-# - This repo's root firebase.json already points Hosting "public" to apps/admin_app/build/web
-
-name: Firebase Hosting Deploy (admin_app)
->>>>>>> 37160a5 (ci: add firebase hosting deploy for admin_app)
+name: Deploy Admin Web to Firebase Hosting
 
 on:
   push:
@@ -23,28 +6,43 @@ on:
       - main
   workflow_dispatch:
 
-<<<<<<< HEAD
+# Minimal permissions required for checkout and deploy action.
+permissions:
+  contents: read
+
+# Prevent overlapping deploys for the same ref.
+concurrency:
+  group: firebase-hosting-admin-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      # Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Flutter
+      # Install Flutter SDK
+      - name: Set up Flutter (stable)
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          cache: true
 
-      - name: Install dependencies
+      # Resolve dependencies (monorepo-safe)
+      - name: Flutter pub get (admin_app)
         working-directory: apps/admin_app
         run: flutter pub get
 
-      - name: Build Flutter Web
+      # Build release web output.
+      # Note: Root firebase.json uses "public": "apps/admin_app/build/web".
+      - name: Build Flutter Web (release)
         working-directory: apps/admin_app
         run: flutter build web --release
 
+      # Deploy to Firebase Hosting (live channel)
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
@@ -52,63 +50,3 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: studio-496411193-44315
           channelId: live
-=======
-permissions:
-  contents: read
-
-concurrency:
-  group: firebase-hosting-admin-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  deploy:
-    name: Build & deploy admin_app web
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Flutter (stable)
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Flutter pub get (admin_app)
-        working-directory: apps/admin_app
-        run: flutter pub get
-
-      # Provide Supabase + Firebase web config via dart-define-from-file.
-      # The workflow creates the json file at build time so it is never stored in git.
-      - name: Create .dart-define-admin-web.json
-        shell: bash
-        run: |
-          if [[ -z "${{ secrets.ADMIN_WEB_DART_DEFINES_JSON_B64 }}" ]]; then
-            echo "Missing secret: ADMIN_WEB_DART_DEFINES_JSON_B64" >&2
-            exit 1
-          fi
-          echo "${{ secrets.ADMIN_WEB_DART_DEFINES_JSON_B64 }}" | base64 --decode > apps/admin_app/.dart-define-admin-web.json
-
-      - name: Build Flutter Web (release)
-        working-directory: apps/admin_app
-        run: flutter build web --release --dart-define-from-file=.dart-define-admin-web.json
-
-      # Deploy to Firebase Hosting using Firebase CLI.
-      - name: Deploy to Firebase Hosting
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-        run: |
-          if [[ -z "${FIREBASE_TOKEN}" ]]; then
-            echo "Missing secret: FIREBASE_TOKEN" >&2
-            exit 1
-          fi
-          if [[ -z "${FIREBASE_PROJECT_ID}" ]]; then
-            echo "Missing secret: FIREBASE_PROJECT_ID" >&2
-            exit 1
-          fi
-
-          # Uses root firebase.json (public: apps/admin_app/build/web)
-          npx --yes firebase-tools deploy --only hosting --project "${FIREBASE_PROJECT_ID}"
->>>>>>> 37160a5 (ci: add firebase hosting deploy for admin_app)
