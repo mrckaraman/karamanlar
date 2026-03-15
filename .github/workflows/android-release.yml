@@ -1,0 +1,83 @@
+# Android Release Pipeline (Monorepo)
+# - Builds release APKs (and AABs when possible) for both apps
+# - Uploads outputs as downloadable GitHub Actions artifacts
+# - Prepared for future Play Store signing/release steps
+
+name: Android Release (admin_app + customer_app)
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Android release (${{ matrix.appId }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - appId: customer_app
+            appPath: apps/customer_app
+          - appId: admin_app
+            appPath: apps/admin_app
+
+    steps:
+      # 1) Fetch repository
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2) Java is required for Gradle/Android builds
+      - name: Set up Java (Temurin 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          # Enables Gradle dependency caching without extra actions
+          cache: gradle
+
+      # 3) Install Flutter SDK
+      - name: Set up Flutter (stable)
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # 4) Resolve dependencies for the target app (monorepo-safe)
+      - name: Flutter pub get
+        working-directory: ${{ matrix.appPath }}
+        run: flutter pub get
+
+      # 5) Build release APK
+      - name: Build APK (release)
+        working-directory: ${{ matrix.appPath }}
+        run: flutter build apk --release
+
+      # 6) Build release AAB (optional)
+      # Some projects require signing configs for release bundles.
+      # This step is allowed to fail without breaking the whole pipeline.
+      - name: Build App Bundle (release)
+        working-directory: ${{ matrix.appPath }}
+        run: flutter build appbundle --release
+        continue-on-error: true
+
+      # 7) Upload APK artifact (required)
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.appId }}-apk-release
+          path: ${{ matrix.appPath }}/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      # 8) Upload AAB artifact (if produced)
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.appId }}-aab-release
+          path: ${{ matrix.appPath }}/build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: warn
+          retention-days: 14
