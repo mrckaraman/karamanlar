@@ -1,0 +1,41 @@
+# --- Flutter / Dart (monorepo) ---
+**/.dart_tool/
+**/build/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.packages
+**/.pub/
+**/.pub-cache/
+
+# Dart define files (Supabase/Firebase config) should not be committed
+**/.dart-define-*.json
+
+# --- Android ---
+**/.gradle/
+**/local.properties
+**/captures/
+
+# --- iOS / macOS ---
+**/Pods/
+**/.symlinks/
+**/Flutter/ephemeral/
+**/DerivedData/
+**/.xcuserdata/
+
+# --- IDEs ---
+**/.idea/
+**/*.iml
+
+# --- Firebase / Apple config (credentials) ---
+**/google-services.json
+**/GoogleService-Info.plist
+
+# --- Firebase tooling ---
+.firebase/
+
+# --- Supabase local tooling ---
+supabase/.temp/
+
+# --- Misc ---
+.DS_Store
+*.log

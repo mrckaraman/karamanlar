@@ -9,7 +9,8 @@
 				"run",
 				"-d",
 				"emulator-5554",
-				"--debug"
+				"--debug",
+				"--dart-define-from-file=.dart-define-admin-android.json"
 			],
 			"options": {
 				"cwd": "${workspaceFolder}/apps/admin_app"

@@ -51,6 +51,30 @@ jobs:
         working-directory: ${{ matrix.appPath }}
         run: flutter pub get
 
+      # Provide Firebase Android config via GitHub Secrets.
+      # Store each file content as base64 (to preserve JSON formatting) in secrets:
+      # - CUSTOMER_ANDROID_GOOGLE_SERVICES_JSON_B64
+      # - ADMIN_ANDROID_GOOGLE_SERVICES_JSON_B64
+      - name: Inject google-services.json (Android)
+        shell: bash
+        run: |
+          if [[ "${{ matrix.appId }}" == "customer_app" ]]; then
+            if [[ -z "${{ secrets.CUSTOMER_ANDROID_GOOGLE_SERVICES_JSON_B64 }}" ]]; then
+              echo "Missing secret: CUSTOMER_ANDROID_GOOGLE_SERVICES_JSON_B64" >&2
+              exit 1
+            fi
+            echo "${{ secrets.CUSTOMER_ANDROID_GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > apps/customer_app/android/app/google-services.json
+          elif [[ "${{ matrix.appId }}" == "admin_app" ]]; then
+            if [[ -z "${{ secrets.ADMIN_ANDROID_GOOGLE_SERVICES_JSON_B64 }}" ]]; then
+              echo "Missing secret: ADMIN_ANDROID_GOOGLE_SERVICES_JSON_B64" >&2
+              exit 1
+            fi
+            echo "${{ secrets.ADMIN_ANDROID_GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > apps/admin_app/android/app/google-services.json
+          else
+            echo "Unknown appId: ${{ matrix.appId }}" >&2
+            exit 1
+          fi
+
       # 5) Build release APK
       - name: Build APK (release)
         working-directory: ${{ matrix.appPath }}

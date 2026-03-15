@@ -39,6 +39,18 @@ jobs:
         working-directory: apps/customer_app
         run: flutter pub get
 
+      # Provide Firebase Android config via GitHub Secrets.
+      # Store the file content as base64 in a secret named:
+      # - CUSTOMER_ANDROID_GOOGLE_SERVICES_JSON_B64
+      - name: Inject google-services.json (customer_app)
+        shell: bash
+        run: |
+          if [[ -z "${{ secrets.CUSTOMER_ANDROID_GOOGLE_SERVICES_JSON_B64 }}" ]]; then
+            echo "Missing secret: CUSTOMER_ANDROID_GOOGLE_SERVICES_JSON_B64" >&2
+            exit 1
+          fi
+          echo "${{ secrets.CUSTOMER_ANDROID_GOOGLE_SERVICES_JSON_B64 }}" | base64 --decode > apps/customer_app/android/app/google-services.json
+
       # Build the release APK
       - name: Build APK (release)
         working-directory: apps/customer_app

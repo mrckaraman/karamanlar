@@ -7,9 +7,18 @@ A new Flutter project.
 Admin web build'inde Supabase config derleme zamanında verilmelidir; aksi halde login sırasında istekler Firebase Hosting'e gider ve HTML döndüğü için `FormatException: Unexpected token '<' ...` görülebilir.
 
 - Release build:
+	- `.dart-define-admin-web.json` oluştur:
+		- `.dart-define-admin-web.json.example` dosyasını kopyalayıp değerleri doldur.
 	- `flutter build web --release --dart-define-from-file=.dart-define-admin-web.json`
 - Deploy:
 	- `firebase deploy --only hosting`
+
+## Android (Supabase env)
+
+Android build/run için de Supabase URL ve anon key derleme zamanında verilmelidir.
+
+- `.dart-define-admin-android.json` oluştur:
+	- `.dart-define-admin-android.json.example` dosyasını kopyalayıp değerleri doldur.
 
 ## Getting Started
 
