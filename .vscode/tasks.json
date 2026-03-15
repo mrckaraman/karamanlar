@@ -97,50 +97,13 @@
 			"isBackground": false
 		},
 		{
-			"label": "dart analyze",
+			"label": "flutter analyze (monorepo)",
 			"type": "shell",
-			"command": "dart",
+			"command": "powershell",
 			"args": [
-				"analyze"
-			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$dart"
-			],
-			"group": "build"
-		},
-		{
-			"label": "dart analyze",
-			"type": "shell",
-			"command": "dart",
-			"args": [
-				"analyze"
-			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$dart"
-			],
-			"group": "build"
-		},
-		{
-			"label": "dart analyze",
-			"type": "shell",
-			"command": "dart",
-			"args": [
-				"analyze"
-			],
-			"isBackground": false,
-			"problemMatcher": [
-				"$dart"
-			],
-			"group": "build"
-		},
-		{
-			"label": "dart analyze",
-			"type": "shell",
-			"command": "dart",
-			"args": [
-				"analyze"
+				"-NoProfile",
+				"-Command",
+				"cd \"${workspaceFolder}/apps/admin_app\"; flutter analyze; cd \"${workspaceFolder}/apps/customer_app\"; flutter analyze; cd \"${workspaceFolder}/packages/core\"; flutter analyze"
 			],
 			"isBackground": false,
 			"group": "build"
