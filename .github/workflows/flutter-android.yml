@@ -1,0 +1,54 @@
+# Flutter Android CI
+# - Builds a release APK for apps/customer_app
+# - Uploads the generated APK as a GitHub Actions artifact
+
+name: Flutter Android (customer_app)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-apk:
+    name: Build release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Android builds need a JDK. Ubuntu runners have Android SDK tools preinstalled,
+      # but Java is required for Gradle.
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Install Flutter SDK (with caching enabled)
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # Fetch dependencies for the customer app (monorepo-safe)
+      - name: Flutter pub get (customer_app)
+        working-directory: apps/customer_app
+        run: flutter pub get
+
+      # Build the release APK
+      - name: Build APK (release)
+        working-directory: apps/customer_app
+        run: flutter build apk --release
+
+      # Upload the generated APK as an artifact
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: customer_app-android-apk-release
+          path: apps/customer_app/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 14
